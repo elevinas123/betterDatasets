@@ -1,3 +1,77 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+  :root {
+    /* Light Mode */
+    --background: 210 20% 98%;
+    --foreground: 210 15% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 20%;
+
+    --primary: 204, 82%, 41%; /* Cooler, vibrant blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30, 100%, 50%; /* Warm amber for secondary */
+    --secondary-foreground: 240 5% 10%;
+
+    --muted: 210 25% 96%;
+    --muted-foreground: 210 15% 30%;
+
+    --accent: 348, 86%, 61%; /* Vibrant red for accents */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 348, 86%, 61%; /* Reusing accent for destructive actions */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 80%;
+    --input: 210 10% 95%;
+    --ring: 204, 82%, 41%; /* Matching primary for focus ring */
+
+    --radius: 0.375rem; /* Rounded corners for a soft, modern look */
+  }
+
+  .dark {
+    /* Dark Mode */
+    --background: 210 28% 13%;
+    --foreground: 210 18% 80%;
+
+    --card: 210 28% 18%;
+    --card-foreground: 210 18% 80%;
+
+    --popover: 210 28% 18%;
+    --popover-foreground: 210 18% 80%;
+
+    --primary: 204, 82%, 50%; /* Brighter blue for dark mode */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 30, 100%, 65%; /* Lighter amber for visibility */
+    --secondary-foreground: 240 3.7% 15.9%;
+
+    --muted: 210 28% 16%;
+    --muted-foreground: 210 20% 65%;
+
+    --accent: 348, 86%, 70%; /* Lighter red for clear visibility */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 348, 86%, 70%; /* Matching accent for consistency */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 25% 25%;
+    --input: 210 25% 20%;
+    --ring: 204, 82%, 50%; /* Slightly brighter than primary for emphasis */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
