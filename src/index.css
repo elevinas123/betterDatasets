@@ -75,3 +75,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.aside {
+    background-color: #E0E0E0;
+    box-shadow: 8px 8px 15px #bebebe,
+                -8px -8px 15px #ffffff;
+}
+.button {
+    background-color: #E0E0E0;
+    box-shadow: 2px 2px 5px #bebebe,
+                -2px -2px 5px #ffffff;
+}
+.button:hover {
+    background-color: #E0E0E0;
+    box-shadow: inset 2px 2px 5px #bebebe,
+                inset -2px -2px 5px #ffffff;
+}

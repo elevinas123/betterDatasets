@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CSVDataTable from "./CSVDataTable";
 import sanitizeHtml from "sanitize-html";
 // TypeScript interfaces for type safety
@@ -38,7 +38,10 @@ type DatasetPageProps = {
 // Assuming the same TypeScript interfaces for Dataset and DatasetPageProps
 
 
-const DatasetPage: React.FC<DatasetPageProps> = ({dataset}) => {
+const DatasetPage: React.FC<DatasetPageProps> = ({ dataset }) => {
+    useEffect(() => {
+        console.log("dataset", dataset)
+    }, [dataset])
     if (!dataset) return <div>Error</div>
     const csvResource = dataset.resources.find((resource) => resource.format === "CSV");
     const cleanNotes = sanitizeHtml(dataset.notes, {
@@ -91,7 +94,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({dataset}) => {
                     </section>
 
                     <section className="shadow-md p-6 rounded-lg bg-card text-card-foreground">
-                        <h2 className="text-2xl font-semibold mb-2">Resources</h2>
+                        <h2 className="text-2xl font-semibold mb-2">Resources to download</h2>
                         {dataset.resources.map((resource, index) => (
                             <div key={index} className="mb-2">
                                 <a

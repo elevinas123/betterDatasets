@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import Papa from "papaparse";
-import { useTable, usePagination, Row, Cell, Column } from "react-table";
+import { useTable, usePagination, useSortBy, Row, Cell, Column } from "react-table";
+
 import PaginationComponent from "./PaginationComponent";
 
 interface CSVDataTableProps {
@@ -13,6 +14,9 @@ interface Data {
 
 const CSVDataTable: React.FC<CSVDataTableProps> = ({ csvUrl }) => {
     const [data, setData] = useState<Data[]>([]);
+    useEffect(() => {
+        console.log("data", data)
+    })
     const [loading, setLoading] = useState(true);
     const rowsPerPage = 100;
     useEffect(() => {
@@ -64,9 +68,11 @@ const CSVDataTable: React.FC<CSVDataTableProps> = ({ csvUrl }) => {
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: rowsPerPage }, // Setting the initial page size here
+            initialState: { pageIndex: 0, pageSize: rowsPerPage },
         },
-        usePagination)
+        useSortBy, // Add the useSortBy hook here
+        usePagination
+    );
 
     const onPageChange = (newPage: number) => {
         gotoPage(newPage - 1);
@@ -82,8 +88,12 @@ const CSVDataTable: React.FC<CSVDataTableProps> = ({ csvUrl }) => {
                         {headerGroups.map((headerGroup) => (
                             <tr {...headerGroup.getHeaderGroupProps()}>
                                 {headerGroup.headers.map((column) => (
-                                    <th {...column.getHeaderProps()} className="px-6 py-3 text-left">
+                                    <th
+                                        {...column.getHeaderProps(column.getSortByToggleProps())}
+                                        className="px-6 py-3 text-left"
+                                    >
                                         {column.render("Header")}
+                                        <span>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
                                     </th>
                                 ))}
                             </tr>

@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
-
 type Props = {
-    tags: unknown
-}
+    tags: unknown;
+};
 
-
-const LeftHandSide: React.FC<Props> = ({tags}) => {
+const LeftHandSide: React.FC<Props> = ({ tags }) => {
     const [searchInputed, setSearchInputed] = useState("");
     const [tagsPicked, setTagsPicked] = useState<string[]>([]);
     const [formatsPicked, setFormatsPicked] = useState<string[]>([]);
+    const [tagSearch, setTagSearch] = useState("")
     const apiKey = "k4AkDG3946rKOWZT5Qc9UpccxlUyWkrEjPGUJPUQ";
 
     useEffect(() => {
@@ -71,12 +70,11 @@ const LeftHandSide: React.FC<Props> = ({tags}) => {
         }
     );
 
-    const [currentSuggestions, setCurrentSuggestions] = useState([]);
+    const [currentSuggestions, setCurrentSuggestions] = useState<SuggestionScore[]>([]);
 
     useEffect(() => {
         if (!autocompletedTags) return;
-        console.log("autocompletedTags", autocompletedTags);
-        console.log("scoreSuggestions", scoreSuggestions(searchInputed, autocompletedTags));
+        setCurrentSuggestions(scoreSuggestions(searchInputed, autocompletedTags))
     }, [autocompletedTags]);
     const handlePicked = (name: string, where: string) => {
         if (where === "tag") {
@@ -102,24 +100,42 @@ const LeftHandSide: React.FC<Props> = ({tags}) => {
             throw new Error(`Wrong place, got ${where}`);
         }
     };
+    
+    const handleTagPicked = (tag) => {
+        
+    }
+
+
+    const renderTagSuggestions = () => {
+        return currentSuggestions?.map(({ suggestion , score}: SuggestionScore) => (
+            <button
+                key={suggestion}
+                onClick={() => handleTagPicked(suggestion)}
+                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-full text-sm transition-colors duration-300 ease-in-out"
+            >
+                {suggestion}
+            </button>
+        ));
+    };
+
     if (!tags) return <div>Loading</div>;
 
     return (
-        <aside className="w-1/4 p-6 bg-gray-50 text-gray-700">
+        <aside className="w-1/4 p-6 bg-gray-100 text-gray-700">
             <div className="mb-8">
                 <h2 className="font-semibold text-xl mb-5 text-primary">Filters</h2>
                 {/* Search filter */}
                 <div className="mb-6">
-                    <label htmlFor="search" className="block text-sm font-medium mb-3 text-gray-600">
+                    <label htmlFor="search" className="block text-sm font-medium mb-2 text-gray-600">
                         Search
                     </label>
                     <input
                         type="text"
                         name="search"
                         id="search"
-                        value={searchInputed}
-                        onChange={(e) => setSearchInputed(e.target.value)}
-                        className="shadow focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-lg py-2 px-4"
+                        value={tagSearch}
+                        onChange={(e) => setTagSearch(e.target.value)}
+                        className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md py-2 px-4"
                         placeholder="Filter by name"
                     />
                 </div>
@@ -128,31 +144,42 @@ const LeftHandSide: React.FC<Props> = ({tags}) => {
 
             <div>
                 <h2 className="font-semibold text-xl mb-5 text-primary">Tags</h2>
+
+                <div className="mb-6">
+                    <input
+                        type="text"
+                        name="search"
+                        id="search"
+                        value={searchInputed}
+                        onChange={(e) => setSearchInputed(e.target.value)}
+                        className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md py-2 px-4"
+                        placeholder="Search tag"
+                    />
+                    <div className="bg-white shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md py-2 px-4">
+                        {renderTagSuggestions()}
+                    </div>
+                </div>
                 {/* Dynamically generated tags */}
-                <div className="flex flex-wrap gap-2.5">
-                    {tags &&
-                        tags.search_facets.tags.items.map((tag) => (
-                            <button
-                                key={tag.name}
-                                onClick={() => handlePicked(tag.name, "tag")}
-                                className={`${
-                                    tagsPicked.includes(tag.name) ? "bg-secondary" : "bg-primary"
-                                } hover:bg-secondary text-white px-4 py-2 rounded-full text-sm leading-none transition-colors duration-300`}
-                            >
-                                {tag.name}
-                            </button>
-                        ))}
+                <div className="flex flex-wrap gap-2">
+                    {tagsPicked.map((tag) => (
+                        <button
+                            key={tag}
+                            className={`text-white px-4 py-2 rounded-full text-sm leading-none transition-colors duration-300 ease-in-out`}
+                        >
+                            {tag}
+                        </button>
+                    ))}
                 </div>
             </div>
 
             <div>
-                <h2 className="font-semibold text-xl mb-5 text-primarym mt-4">Formats</h2>
-                <div className="flex flex-wrap gap-2.5">
+                <h2 className="font-semibold text-xl mb-5 text-primary mt-4">Formats</h2>
+                <div className="flex flex-wrap gap-2">
                     <button
                         onClick={() => handlePicked("csv", "formats")}
                         className={`${
                             formatsPicked.indexOf("csv") >= 0 ? "bg-secondary" : "bg-primary"
-                        } hover:bg-secondary text-white px-4 py-2 rounded-full text-sm leading-none`}
+                        } hover:bg-primary-dark text-white px-4 py-2 rounded-full text-sm leading-none transition-all duration-300 ease-in-out`}
                     >
                         CSV
                     </button>
@@ -160,7 +187,7 @@ const LeftHandSide: React.FC<Props> = ({tags}) => {
                         onClick={() => handlePicked("json", "formats")}
                         className={`${
                             formatsPicked.indexOf("json") >= 0 ? "bg-secondary" : "bg-primary"
-                        } hover:bg-secondary text-white px-4 py-2 rounded-full text-sm leading-none focus:outline-1  focus-within:outline-black`}
+                        } hover:bg-primary-dark text-white px-4 py-2 rounded-full text-sm leading-none transition-all duration-300 ease-in-out`}
                     >
                         JSON
                     </button>
@@ -174,7 +201,7 @@ const LeftHandSide: React.FC<Props> = ({tags}) => {
 export default LeftHandSide;
 
 async function autocompleteTags(apiKey: string, query: string) {
-    console.log("started")
+    console.log("started");
     const response = await fetch(`/api/tag_autocomplete?query=${query}&limit=100&offset=0`, {
         headers: {
             "Content-Type": "application/json",
