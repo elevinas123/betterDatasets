@@ -5,11 +5,12 @@ import PaginationComponent from "./PaginationComponent";
 import { useEffect, useState } from "react";
 
 type Props = {
-    setPage: unknown
-}
+    setPage: unknown;
+    setCurrDataset: unknown;
+};
 
 
-export default function SearchPage({setPage}: Props) {
+export default function SearchPage({setPage, setCurrDataset}: Props) {
     const apiKey = "k4AkDG3946rKOWZT5Qc9UpccxlUyWkrEjPGUJPUQ";
     const path = "package_search";
     const rows = 20;
@@ -48,33 +49,34 @@ export default function SearchPage({setPage}: Props) {
     if (isInitialLoad || !data || !mostFamousTags) return <div>Loading...</div>;
     if (error) return <div>Error</div>;
     return (
-        
-            <div className="flex flex-grow">
-                {/* Sidebar for filters and tags */}
-                <LeftHandSide tags={mostFamousTags} />
-                {/* Dataset cards and pagination */}
-                <div className="flex flex-col flex-1 p-10">
-                    <div className="flex flex-wrap -mx-4">
-                        { data.results.map((i) => (
-                            <DatasetCard
-                                key={i.id}
-                                id={i.id}
-                                title={i.title}
-                                formats={["csv", "json", "html"]}
-                                updated={i.metadata_modified}
-                                maintainer={i.maintainer}
-                                setPage={setPage}
-                            />
-                        ))}
-                    </div>
-                    <PaginationComponent
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(data.count / 20)}
-                        onPageChange={onPageChange}
-                    />
+        <div className="flex flex-grow">
+            {/* Sidebar for filters and tags */}
+            <LeftHandSide tags={mostFamousTags} />
+            {/* Dataset cards and pagination */}
+            <div className="flex flex-col flex-1 p-10">
+                <div className="flex flex-wrap -mx-4">
+                    {data.results.map((i) => (
+                        <DatasetCard
+                            key={i.id}
+                            id={i.id}
+                            title={i.title}
+                            formats={["csv", "json", "html"]}
+                            updated={i.metadata_modified}
+                            maintainer={i.maintainer}
+                            setPage={setPage}
+                            setCurrDataset={setCurrDataset}
+                            fullItem={i}
+                        />
+                    ))}
                 </div>
+                <PaginationComponent
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(data.count / 20)}
+                    onPageChange={onPageChange}
+                />
             </div>
-    )
+        </div>
+    );
 }
 
 

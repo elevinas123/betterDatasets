@@ -4,10 +4,12 @@ type Props = {
     updated: string;
     maintainer: string;
     formats: string[];
-    setPage: unknown
+    setPage: unknown;
+    setCurrDataset: unknown;
+    fullItem: unknown
 };
 
-const DatasetCard: React.FC<Props> = ({ id, title, updated, maintainer, formats, setPage }) => {
+const DatasetCard: React.FC<Props> = ({fullItem, id, title, updated, maintainer, formats, setPage, setCurrDataset }) => {
     const date = daysAgo(updated);
 
     return (
@@ -31,7 +33,10 @@ const DatasetCard: React.FC<Props> = ({ id, title, updated, maintainer, formats,
                 <div className="flex justify-end px-6 pb-4">
                     <a
                         href="#"
-                        onClick={() => setPage("dataset")}
+                        onClick={() => {
+                            setCurrDataset(fullItem)
+                            setPage("dataset")
+                        }}
                         className="text-accent hover:text-accent-light font-semibold transition-colors duration-300"
                     >
                         Learn More →

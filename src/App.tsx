@@ -8,6 +8,7 @@ export default function App() {
     
 
     const [page, setPage] = useState("search")
+    const [currDataset, setCurrDataset] = useState(null)
 
     
     return (
@@ -18,7 +19,7 @@ export default function App() {
                     <h1 className="font-bold text-xl">Dataset Explorer</h1>
                 </div>
             </header>
-            {page === "search" ? <SearchPage setPage={setPage} /> : <DatasetPage setPage={setPage} />}
+            {page === "search" ? <SearchPage setPage={setPage} setCurrDataset={setCurrDataset} /> : <DatasetPage dataset={currDataset} />}
         </div>
     );
 
