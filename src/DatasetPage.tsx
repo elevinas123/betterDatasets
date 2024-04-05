@@ -1,6 +1,6 @@
 import React from "react";
 import CSVDataTable from "./CSVDataTable";
-
+import sanitizeHtml from "sanitize-html";
 // TypeScript interfaces for type safety
 interface Resource {
     description: string;
@@ -41,12 +41,31 @@ type DatasetPageProps = {
 const DatasetPage: React.FC<DatasetPageProps> = ({dataset}) => {
     if (!dataset) return <div>Error</div>
     const csvResource = dataset.resources.find((resource) => resource.format === "CSV");
-
+    const cleanNotes = sanitizeHtml(dataset.notes, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "span"]),
+        allowedAttributes: {
+            ...sanitizeHtml.defaults.allowedAttributes,
+            a: ["href", "style", "target", "rel"],
+            img: ["src", "alt"],
+            span: ["class"],
+        },
+        allowedStyles: {
+            "*": {
+                // Allow certain CSS styles for all elements
+                color: [/^#(0x)?[0-9a-f]+$/i, /^rgb/], // Allows colors in hex (#RRGGBB) or rgb()
+                "text-align": [/^left$/, /^right$/, /^center$/], // Allows text alignment
+            },
+            a: {
+                // Additional styles for <a> tags
+                "text-decoration": [/^none$/, /^underline$/],
+            },
+        },
+    });
     return (
         <div className="container mx-auto p-4 bg-background text-foreground">
             <div className="shadow-md p-6 mb-6 rounded-lg bg-card text-card-foreground">
                 <h1 className="text-3xl font-bold mb-4 text-primary-default">{dataset.title}</h1>
-                <p className="mb-4">{dataset.notes}</p>
+                <div dangerouslySetInnerHTML={{ __html: cleanNotes }} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -54,7 +73,6 @@ const DatasetPage: React.FC<DatasetPageProps> = ({dataset}) => {
                     <section className="flex flex-col shadow-md p-6 mb-6 rounded-lg bg-card text-card-foreground">
                         <h2 className="text-2xl font-semibold mb-2">CSV preview</h2>
                         {csvResource && <CSVDataTable csvUrl={csvResource.url} />}
-                        
                     </section>
 
                     <section className="shadow-md p-6 mb-6 rounded-lg bg-card text-card-foreground">
